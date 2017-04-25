@@ -3,9 +3,17 @@ Wave
 
 Go programming language feature flagging
 
+[![Code Climate](https://codeclimate.com/github/aisola/wave/badges/gpa.svg)](https://codeclimate.com/github/aisola/wave)
+[![Go Report Card](https://goreportcard.com/badge/github.com/aisola/wave)](https://goreportcard.com/report/github.com/aisola/wave)
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+
 Inspired by the [pyrollout](https://github.com/brechin/pyrollout) python
 package by [Jason Brechin](https://github.com/brechin). I've put no genius
 into this. I've just ported it and made it slightly more go idiomatic.
+
+I've renamed it from rollout to wave simply because I am lazy and do not want
+to type `rollout` so many times in my go code. Wave is shorter and ebbs and
+flows like a software rollout too.
 
 ### Warning
 
