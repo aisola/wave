@@ -31,7 +31,7 @@ func (imb *InMemoryBackend) Get(name string) (*wave.Feature, error) {
 	if value, ok := imb.features[name]; ok {
 		return value, nil
 	}
-	return nil, wave.FeatureNotFoundError
+	return nil, wave.ErrFeatureNotFound
 }
 
 // Open sets up the backend to be used.

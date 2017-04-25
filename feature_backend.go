@@ -7,7 +7,7 @@ import (
 var (
 	// FeatureNotFoundError should be returned by a FeatureBacked's Get
 	// method if the feature cannot be found.
-	FeatureNotFoundError = errors.New("feature not found")
+	ErrFeatureNotFound = errors.New("feature not found")
 )
 
 // FeatureBackend is the interface which different backends must implement in
@@ -23,7 +23,7 @@ type FeatureBackend interface {
 	Close() error
 
 	// Get takes in a feature name string and returns the feature that
-	// matches that name, or it should return FeatureNotFoundError.
+	// matches that name, or it should return ErrFeatureNotFound.
 	Get(string) (*Feature, error)
 
 	// Set is called by a Wave instance in order to add a feature to the
