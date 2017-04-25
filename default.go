@@ -11,8 +11,8 @@ func AddFeature(feature *Feature) {
 }
 
 // Can is a convenience function that calls Default.Can.
-func Can(user User, feature_name string) bool {
-	return Default.Can(user, feature_name)
+func Can(user User, name string) bool {
+	return Default.Can(user, name)
 }
 
 // Close is a convenience function that calls Default.Close.

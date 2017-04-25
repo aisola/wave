@@ -23,8 +23,8 @@ func (r *Wave) AddFeature(feature *Feature) {
 }
 
 // Can returns true of the given user has access to the given feature.
-func (r *Wave) Can(user User, feature_name string) bool {
-	feature, err := r.storage.Get(feature_name)
+func (r *Wave) Can(user User, name string) bool {
+	feature, err := r.storage.Get(name)
 	if err != nil {
 		return r.UndefinedAccess
 	}
