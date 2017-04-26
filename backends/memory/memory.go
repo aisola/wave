@@ -41,6 +41,7 @@ func (imb *InMemoryBackend) Open(interface{}) error {
 }
 
 // Set will create a feature given a feature name and a wave.Feature.
-func (imb *InMemoryBackend) Set(name string, feature *wave.Feature) {
+func (imb *InMemoryBackend) Set(name string, feature *wave.Feature) error {
 	imb.features[name] = feature
+	return nil
 }

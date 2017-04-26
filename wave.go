@@ -18,8 +18,8 @@ func NewWave(backend FeatureBackend) *Wave {
 }
 
 // AddFeature adds a Feature to the wave instance.
-func (r *Wave) AddFeature(feature *Feature) {
-	r.storage.Set(feature.Name, feature)
+func (r *Wave) AddFeature(feature *Feature) error {
+	return r.storage.Set(feature.Name, feature)
 }
 
 // Can returns true of the given user has access to the given feature.

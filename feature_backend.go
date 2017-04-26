@@ -29,5 +29,5 @@ type FeatureBackend interface {
 	// Set is called by a Wave instance in order to add a feature to the
 	// backend. The first argument is the feature name and the second is
 	// the feature.
-	Set(string, *Feature)
+	Set(string, *Feature) error
 }
