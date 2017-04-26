@@ -16,14 +16,7 @@ I've renamed it from rollout to wave simply because I am lazy and do not want
 to type `rollout` so many times in my go code. Wave is shorter and ebbs and
 flows like a software rollout too.
 
-### Warning
-
-Like any other random code you find on the internet, this package should not be
-relied upon in important, production systems without thorough testing to ensure
-that it meets your needs. It has no tests, and has been used only a few times by
-me in production.
-
-**TL;DR** I really need to write tests.
+~~I really need to write tests.~~
 
 ## Typical Usage
 
