@@ -5,6 +5,7 @@ Go programming language feature flagging
 
 [![GoDoc Widget](https://godoc.org/github.com/aisola/wave?status.svg)](https://godoc.org/github.com/aisola/wave)
 [![Build Status](https://travis-ci.org/aisola/wave.svg?branch=master)](https://travis-ci.org/aisola/wave)
+[![Coverage Status](https://coveralls.io/repos/github/aisola/wave/badge.svg?branch=master)](https://coveralls.io/github/aisola/wave?branch=master)
 [![Code Climate](https://codeclimate.com/github/aisola/wave/badges/gpa.svg)](https://codeclimate.com/github/aisola/wave)
 [![Go Report Card](https://goreportcard.com/badge/github.com/aisola/wave)](https://goreportcard.com/report/github.com/aisola/wave)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
