@@ -11,6 +11,7 @@ import (
 type testingBackend struct {
 	Features map[string]*wave.Feature
 	CloseSideEffect error
+	SetSideEffect error
 }
 
 func newTestingBackend() *testingBackend {
@@ -36,8 +37,9 @@ func (tb *testingBackend) Get(name string) (*wave.Feature, error) {
 	return nil, wave.ErrFeatureNotFound
 }
 
-func (tb *testingBackend) Set(name string, feature *wave.Feature) {
+func (tb *testingBackend) Set(name string, feature *wave.Feature) error {
 	tb.Features[name] = feature
+	return tb.SetSideEffect
 }
 
 // USER INFORMATION FOR TESTING
