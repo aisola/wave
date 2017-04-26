@@ -18,6 +18,22 @@ flows like a software rollout too.
 
 ~~I really need to write tests.~~
 
+## Installation & Tests
+
+Using good ol' `go get`:
+
+```bash
+go get -u -v github.com/aisola/wave
+go test github.com/aisola/wave/...
+```
+
+Using the new fangled `dep`:
+
+```bash
+dep ensure -update github.com/aisola/wave
+go test github.com/aisola/wave/...
+```
+
 ## Typical Usage
 
 While wave allows you to create and manage your own wave instances, the typical
