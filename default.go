@@ -1,13 +1,18 @@
 package wave
 
-// Default is a Wave instance with FileStorage set to nil. It is intended that
-// users of the default pull in the side effect of a backend package, which must
-// set the backend for this instance's method.
-var Default = NewWave(nil)
+func init() {
+	imb := NewInMemoryBackend()
+	registeredBackends[""] = imb
+	registeredBackends["memory"] = imb
+	Default.SetBackend("")
+}
+
+// Default is a Wave instance using the default InMemoryBackend.
+var Default = &Wave{}
 
 // AddFeature is a convenience function that calls Default.AddFeature.
-func AddFeature(feature *Feature) {
-	Default.AddFeature(feature)
+func AddFeature(feature *Feature) error {
+	return Default.AddFeature(feature)
 }
 
 // Can is a convenience function that calls Default.Can.
@@ -21,6 +26,6 @@ func Close() error {
 }
 
 // Open is a convenience function that calls Default.Open.
-func Open(info interface{}) error {
-	return Default.Open(info)
+func Open(connection string) error {
+	return Default.Open(connection)
 }
