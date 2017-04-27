@@ -19,7 +19,7 @@ func newTestUser(groups []string) *testUser {
 	return &testUser{
 		UUID: uuid,
 		Name: fmt.Sprintf("Test User {%s}", uuid),
-		FG: groups,
+		FG:   groups,
 	}
 }
 

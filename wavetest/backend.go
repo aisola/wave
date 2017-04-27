@@ -9,13 +9,13 @@ import (
 // CloseSideEffect, OpenSideEffect, and SetSideEffect are the errors that
 // should be returned on the Close, Open, and Set method calls, respecitvely.
 type TestingBackend struct {
-	Features map[string]*wave.Feature
+	Features        map[string]*wave.Feature
 	CloseSideEffect error
-	OpenSideEffect error
-	SetSideEffect error
+	OpenSideEffect  error
+	SetSideEffect   error
 }
 
-// NewTestBackend returns a new initialized instance of TestingBackend which is
+// NewTestingBackend returns a new initialized instance of TestingBackend which is
 // ready for use in test cases.
 func NewTestingBackend() *TestingBackend {
 	return &TestingBackend{

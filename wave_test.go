@@ -95,7 +95,6 @@ func TestWaveCan(t *testing.T) {
 	}
 }
 
-
 func TestWaveSetStorage(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {

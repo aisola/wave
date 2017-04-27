@@ -55,7 +55,7 @@ func (w *Wave) Open(connection string) error {
 // SetBackend sets the FeatureBackend for this wave instance. It will panic
 // if the named backend is not registered.
 func (w *Wave) SetBackend(backend string) {
-	storage, ok := registeredBackends[backend];
+	storage, ok := registeredBackends[backend]
 	if !ok {
 		panic(fmt.Sprintf("FeatureBackend `%s` is not registered.", backend))
 	}

@@ -44,7 +44,6 @@ func TestDefaultClose(t *testing.T) {
 	}
 }
 
-
 func TestDefaultAddFeature(t *testing.T) {
 	tb := wavetest.NewTestingBackend()
 	wave.Register("testing", tb)
