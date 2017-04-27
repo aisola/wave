@@ -18,8 +18,6 @@ I've renamed it from rollout to wave simply because I am lazy and do not want
 to type `rollout` so many times in my go code. Wave is shorter and ebbs and
 flows like a software rollout too.
 
-~~I really need to write tests.~~
-
 ## Installation & Tests
 
 Using good ol' `go get`:
@@ -40,28 +38,23 @@ go test github.com/aisola/wave/...
 
 While wave allows you to create and manage your own wave instances, the typical
 user of wave will simply underscore-import a backend and use the default instance.
+Here, since we are not underscore-importing ay different backend, wave uses
+in-memory storage.
 
 ```go
 // ...
 
 import (
        "github.com/aisola/wave"
-       _ "github.com/aisola/wave/backends/memory"
 )
 
 func main() {
-     // Opens the backend with the provided information
-     if err := wave.Open(); err != nil {
-     	log.Fatalf("Could not open wave, %s", err)
-     }
-     defer wave.Close()
-
      // ...
 }
 ```
 
 If you want undefined features grant access to all users, you can do that by
-marking the `UndefinedAccess` field as `true`.
+marking the default `Wave.UndefinedAccess` field as `true`.
 
 ```go
 wave.Default.UndefinedAccess = true
@@ -73,7 +66,7 @@ Now add features:
 // ...
 
 // Open to all by using the special group 'ALL'
-wave.AddFeatureGroups(wave.NewFeatureGroups("feature_for_all", wave.ALL))
+wave.AddFeature(wave.NewFeatureGroups("feature_for_all", wave.ALL))
 
 // Open to select groups
 wave.AddFeature(wave.NewFeatureGroups("feature_for_groups", []string{"vip", "early-adopter"}))
@@ -92,7 +85,7 @@ Check access to features:
 func UntestedFeature(user wave.User) bool {
      // Because this feature was not defined, access will always be denied, unless you've
      // set Wave.UndefinedAccess as true.
-     if !FeatureSet.Can(user, "use_untested_feature") {
+     if !wave.Can(user, "use_untested_feature") {
      	  return false
      }
 
@@ -109,7 +102,7 @@ func FooHandler(w http.ResponseWriter, r *http.Request) {
      ctx := r.Context()
      user := ctx.Value("user").(*User)
 
-     if !FeatureSet.Can(user, "feature_for_users") {
+     if !wave.Can(user, "feature_for_users") {
      	  http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 	  return
      }
@@ -127,26 +120,31 @@ your application. For instance, if you have two different APIs serving out of
 the same binary.
 
 ```go
+import (
+       "github.com/aisola/wave"
+       "github.com/some/wave/backend"
+)
+
 // ...
 
-api1 := wave.NewWave(memory.NewInMemoryBackend())
-api2 := wave.NewWave(memory.NewInMemoryBackend())
+api1 := wave.NewWave("backend")
+api2 := wave.NewWave("backend")
 
-if err := api1.Open(nil); err != nil {
+if err := api1.Open("backend://username:password@127.0.0.1:8000/api1"); err != nil {
    log.Fatalf("Could not open up wave backend for api1, %s", err)
 }
 defer api1.Close()
 
-if err := api2.Open(nil); err != nil {
+if err := api2.Open("backend://username:password@127.0.0.1:8000/api2"); err != nil {
    log.Fatalf("Could not open up wave backend for api2, %s", err)
 }
 defer api2.Close()
 
 // Open to all by using the special group 'ALL'
-api1.AddFeatureGroups(wave.NewFeatureGroups("feature_for_all", wave.ALL))
+api1.AddFeature(wave.NewFeatureGroups("feature_for_all", wave.ALL))
 
 // Open to admins
-api2.AddFeatureGroups(wave.NewFeatureGroups("feature_for_admins", []string{"admins"}))
+api2.AddFeature(wave.NewFeatureGroups("feature_for_admins", []string{"admins"}))
 
 // ...
 ```

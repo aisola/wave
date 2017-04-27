@@ -1,94 +1,80 @@
 package wave_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/aisola/wave"
+	"github.com/aisola/wave/wavetest"
 )
 
-
-// TestWaveInstantiation tests that the Wave struct receives the backend correctly.
-// Since the Wave struct has the storage field being private, we do this by setting
-// the CloseSideEffect on our testing backend, we KNOW that this is the only backend
-// in this package that does that so we can consider it passed.
-func TestWaveInstantiation(t *testing.T) {
-	// Redo this one so that it uses just the testBackend
-	tb := newTestingBackend()
-	tb.CloseSideEffect = wave.ErrFeatureNotFound
-	features := wave.NewWave(tb)
-	if err := features.Close(); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on Close was %v, expecting %v", err, wave.ErrFeatureNotFound)
-	}
-}
-
 func TestWaveOpen(t *testing.T) {
-	tb := newTestingBackend()
-	features := wave.NewWave(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	features := wave.New("testing")
 
 	// test successful open
-	if err := features.Open(nil); err != nil {
-		t.Errorf("Error on Open was %v, expecting nil", err)
+	if err := features.Open(""); err != nil {
+		t.Errorf("Wave.Open unexpected error. Expected %v, got %v.", nil, err)
 	}
 
 	// test failed open
-	if err := features.Open(wave.ErrFeatureNotFound); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on Open was %v, expecting %v", err, wave.ErrFeatureNotFound)
+	openError := errors.New("open error")
+	tb.OpenSideEffect = openError
+	if err := features.Open(""); err != openError {
+		t.Errorf("Wave.Open unexpected error. Expected %v, got %v.", openError, err)
 	}
 }
 
 func TestWaveClose(t *testing.T) {
-	tb := newTestingBackend()
-	features := wave.NewWave(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	features := wave.New("testing")
 
 	// test successful close
 	if err := features.Close(); err != nil {
-		t.Errorf("Error on Close was %v, expecting nil", err)
+		t.Errorf("Wave.Close unexpected error. Expected %v, got %v.", nil, err)
 	}
 
-	tb.CloseSideEffect = wave.ErrFeatureNotFound
+	closeError := errors.New("close error")
+	tb.CloseSideEffect = closeError
 	// test failed close
-	if err := features.Close(); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on Open was %v, expecting %v", err, wave.ErrFeatureNotFound)
+	if err := features.Close(); err != closeError {
+		t.Errorf("Wave.Close unexpected error. Expected %v, got %v.", closeError, err)
 	}
 }
 
 func TestWaveAddFeature(t *testing.T) {
-	tb := newTestingBackend()
-	features := wave.NewWave(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	features := wave.New("testing")
 
 	name := "test"
 	feature := &wave.Feature{Name: name}
-	features.AddFeature(feature)
+
+	if err := features.AddFeature(feature); err != nil {
+		t.Errorf("Wave.AddFeature unexpected error. Expected %v, got %v.", nil, err)
+	}
 
 	if tb.Features[name] != feature {
-		t.Errorf("Feature test, not added correctly. Expected %v, got %v", feature, tb.Features[name])
+		t.Errorf("Wave.AddFeature Expected %v, got %v", feature, tb.Features[name])
 	}
-}
 
-func TestWaveSetStorage(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("SetStorage didn't work, expected panic. The call didn't panic.")
-		}
-	}()
-	tb1 := newTestingBackend()
-	tb2 := newTestingBackend()
-	tb2.Features = nil
-
-	features := wave.NewWave(tb1)
-
-	features.SetStorage(tb2)
-
-	features.AddFeature(&wave.Feature{Name: "test"})
+	setError := errors.New("set error")
+	tb.SetSideEffect = setError
+	if err := features.AddFeature(feature); err != setError {
+		t.Errorf("Wave.AddFeature unexpected error. Expected %v, got %v.", setError, err)
+	}
 }
 
 func TestWaveCan(t *testing.T) {
 	user := newTestUser(make([]string, 0))
-	tb := newTestingBackend()
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
 	tb.Features["test_can"] = &wave.Feature{Name: "test_can", Users: []string{user.UUID}}
 	tb.Features["test_cant"] = &wave.Feature{Name: "test_cant", Users: []string{}}
 
-	features := wave.NewWave(tb)
+	features := wave.New("testing")
 
 	if !features.Can(user, "test_can") {
 		t.Errorf("User CANNOT access feature test_can.")
@@ -107,4 +93,17 @@ func TestWaveCan(t *testing.T) {
 	if !features.Can(user, "test-non-exsit") {
 		t.Errorf("User CANT access non-existent feature when UndefinedAccess is true")
 	}
+}
+
+func TestWaveSetStorage(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("SetBackend didn't work, expected panic. The call didn't panic.")
+		}
+	}()
+	tb1 := wavetest.NewTestingBackend()
+	wave.Register("testing1", tb1)
+	features := wave.New("testing")
+
+	features.SetBackend("this-storage-does-not-exist")
 }

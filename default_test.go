@@ -1,62 +1,81 @@
 package wave_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/aisola/wave"
+	"github.com/aisola/wave/wavetest"
 )
 
 func TestDefaultOpen(t *testing.T) {
-	tb := newTestingBackend()
-	wave.Default.SetStorage(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	wave.Default.SetBackend("testing")
 
 	// test successful open
-	if err := wave.Open(nil); err != nil {
-		t.Errorf("Error on wave.Open was %v, expecting nil", err)
+	if err := wave.Open(""); err != nil {
+		t.Errorf("Default.Open unexpected error. Expected %v, got %v.", nil, err)
 	}
 
 	// test failed open
-	if err := wave.Open(wave.ErrFeatureNotFound); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on wave.Open was %v, expecting %v", err, wave.ErrFeatureNotFound)
+	openError := errors.New("open error")
+	tb.OpenSideEffect = openError
+	if err := wave.Open(""); err != openError {
+		t.Errorf("Default.Open unexpected error. Expected %v, got %v.", openError, err)
 	}
 }
 
 func TestDefaultClose(t *testing.T) {
-	tb := newTestingBackend()
-	wave.Default.SetStorage(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	wave.Default.SetBackend("testing")
 
 	// test successful close
 	if err := wave.Close(); err != nil {
-		t.Errorf("Error on Close was %v, expecting nil", err)
+		t.Errorf("Default.Close unexpected error. Expected %v, got %v.", nil, err)
 	}
 
-	tb.CloseSideEffect = wave.ErrFeatureNotFound
 	// test failed close
-	if err := wave.Close(); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on Open was %v, expecting %v", err, wave.ErrFeatureNotFound)
+	closeError := errors.New("close error")
+	tb.CloseSideEffect = closeError
+	if err := wave.Close(); err != closeError {
+		t.Errorf("Default.Open unexpected error. Expected %v, got %v.", closeError, err)
 	}
 }
 
-
 func TestDefaultAddFeature(t *testing.T) {
-	tb := newTestingBackend()
-	wave.Default.SetStorage(tb)
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	wave.Default.SetBackend("testing")
 
 	name := "test"
 	feature := &wave.Feature{Name: name}
 	wave.AddFeature(feature)
 
+	if err := wave.AddFeature(feature); err != nil {
+		t.Errorf("Default.AddFeature unexpected error. Expected %v, got %v.", nil, err)
+	}
+
 	if tb.Features[name] != feature {
-		t.Errorf("Feature test, not added correctly. Expected %v, got %v", feature, tb.Features[name])
+		t.Errorf("Deafault.AddFeature Expected %v, got %v", feature, tb.Features[name])
+	}
+
+	setError := errors.New("set error")
+	tb.SetSideEffect = setError
+	if err := wave.AddFeature(feature); err != setError {
+		t.Errorf("Default.AddFeature unexpected error. Expected %v, got %v.", setError, err)
 	}
 }
 
 func TestDefaultCan(t *testing.T) {
 	user := newTestUser(make([]string, 0))
-	tb := newTestingBackend()
+	tb := wavetest.NewTestingBackend()
+	wave.Register("testing", tb)
+	wave.Default.SetBackend("testing")
+
 	tb.Features["test_can"] = &wave.Feature{Name: "test_can", Users: []string{user.UUID}}
 	tb.Features["test_cant"] = &wave.Feature{Name: "test_cant", Users: []string{}}
-	wave.Default.SetStorage(tb)
 
 	if !wave.Can(user, "test_can") {
 		t.Errorf("User CANNOT access feature test_can.")

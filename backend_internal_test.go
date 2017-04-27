@@ -1,35 +1,34 @@
-package memory
+package wave
 
 import (
 	"testing"
-
-	"github.com/aisola/wave"
 )
 
 func TestNewInMemoryBackend(t *testing.T) {
-	if _, ok := NewInMemoryBackend().(*InMemoryBackend); !ok {
+	var imb interface{} = NewInMemoryBackend()
+	if _, ok := imb.(*InMemoryBackend); !ok {
 		t.Errorf("NewInMemoryBackend did not return *InMemoryBackend")
 	}
 }
 
-func TestClose(t *testing.T) {
+func TestInMemoryClose(t *testing.T) {
 	imb := NewInMemoryBackend()
 	if err := imb.Close(); err != nil {
 		t.Errorf("InMemoryBackend.Close must always return nil")
 	}
 }
 
-func TestOpen(t *testing.T) {
+func TestInMemoryOpen(t *testing.T) {
 	imb := NewInMemoryBackend()
-	if err := imb.Open(nil); err != nil {
+	if err := imb.Open(""); err != nil {
 		t.Errorf("InMemoryBackend.Open must always return nil")
 	}
 }
 
-func TestSet(t *testing.T) {
-	imb := NewInMemoryBackend().(*InMemoryBackend)
-	imb.features = make(map[string]*wave.Feature)
-	feature := &wave.Feature{Name: "test"}
+func TestInMemorySet(t *testing.T) {
+	imb := NewInMemoryBackend()
+	imb.features = make(map[string]*Feature)
+	feature := &Feature{Name: "test"}
 	imb.Set("test", feature)
 
 	if value, ok := imb.features["test"]; !ok {
@@ -41,10 +40,10 @@ func TestSet(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
-	imb := NewInMemoryBackend().(*InMemoryBackend)
-	feature := &wave.Feature{Name: "test"}
-	imb.features = make(map[string]*wave.Feature)
+func TestInMemoryGet(t *testing.T) {
+	imb := NewInMemoryBackend()
+	feature := &Feature{Name: "test"}
+	imb.features = make(map[string]*Feature)
 	imb.features["test"] = feature
 
 	if f, err := imb.Get("test"); err != nil {
@@ -53,8 +52,8 @@ func TestGet(t *testing.T) {
 		t.Errorf("InMemoryBackend.Get returned a magicly appearing feature")
 	}
 
-	if _, err := imb.Get("this-feature-does-not-exist"); err != wave.ErrFeatureNotFound {
-		t.Errorf("Error on InMemoryBackend.Get was %v, expecting %v", err, wave.ErrFeatureNotFound)
+	if _, err := imb.Get("this-feature-does-not-exist"); err != ErrFeatureNotFound {
+		t.Errorf("Error on InMemoryBackend.Get was %v, expecting %v", err, ErrFeatureNotFound)
 	}
 
 }
