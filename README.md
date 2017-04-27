@@ -122,7 +122,7 @@ the same binary.
 ```go
 import (
        "github.com/aisola/wave"
-       "github.com/some/wave/backend"
+       _ "github.com/some/wave/backend"
 )
 
 // ...
