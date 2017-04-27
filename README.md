@@ -124,7 +124,6 @@ import (
        "github.com/aisola/wave"
        _ "github.com/some/wave/backend"
 )
-
 // ...
 
 api1 := wave.NewWave("backend")
