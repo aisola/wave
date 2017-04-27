@@ -41,7 +41,9 @@ type InMemoryBackend struct {
 
 // NewInMemoryBackend creates a new InMemoryBackend.
 func NewInMemoryBackend() *InMemoryBackend {
-	return new(InMemoryBackend)
+	return &InMemoryBackend{
+		features: make(map[string]*Feature),
+	}
 }
 
 // Close wipes and clears the in-memory feature storage.
